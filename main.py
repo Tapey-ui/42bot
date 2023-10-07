@@ -7,8 +7,6 @@ from discord.ext import commands
 
 load_dotenv()
 
-DISCORD_TOKEN = 'MTE1OTc3OTg3Njc0ODkzMTE0NA.GhIFM6.CDYq9gpmcwRE4ax5Ah8Dy0RnqCjuNBa51Nh10M'
-
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -24,7 +22,7 @@ class Button(discord.ui.View):
 	
 	@discord.ui.button(label="Accept", style=discord.ButtonStyle.success)
 	async def accept(self, interaction: discord.interactions, button: discord.ui.Button):
-		stu = await bot.fetch_channel('1159776099455221820')
+		stu = await bot.fetch_channel(os.getenv('STUDENT_CH'))
 		suc = discord.Embed(title = "Request Success!", color = 0x77DD77)
 		suc.add_field(name="", value=f"Hi {self.name}, your request is successful!", inline=True)
 		mes_admin = discord.Embed(title = "Request Appoved!", color = 0x77DD77)
@@ -36,7 +34,7 @@ class Button(discord.ui.View):
 
 	@discord.ui.button(label="Decline", style=discord.ButtonStyle.danger)
 	async def decline(self, interaction: discord.interactions, button: discord.ui.Button):
-		stu = await bot.fetch_channel('1159776099455221820')
+		stu = await bot.fetch_channel(os.getenv('STUDENT_CH'))
 		suc = discord.Embed(title = "Request Declined!", color = 0xFF6961)
 		suc.add_field(name="", value=f"Hi {self.name}, your request has been declined. Should you have any issues regarding blackhole days, please contact the BOCALs.", inline=True)
 		mes_admin = discord.Embed(title = "Request Declined!", color = 0xFF6961)
@@ -53,7 +51,7 @@ async def hello(message):
 
 @bot.command()
 async def blackhole(message, days):
-	admin = await bot.fetch_channel('1160103537817165845')
+	admin = await bot.fetch_channel(os.getenv('ADMIN_CH'))
 	if (days.isdigit() == False or int(days) < 0):
 		await message.send("Hi " + message.author.mention + ", please enter a valid blackhole day amount to request extension! (Must be 14 days or lower)")
 	elif (int(days) > 14):
@@ -71,4 +69,4 @@ async def blackhole(message, days):
 		await admin.send(embed=mes_admin)
 		await admin.send(view=button1)
 
-bot.run(DISCORD_TOKEN)
+bot.run(os.getenv("DISCORD_TOKEN"))
