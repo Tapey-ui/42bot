@@ -9,6 +9,10 @@ from discord.ext import tasks
 from discord import app_commands
 from requests_oauthlib import OAuth2Session
 from oauthlib.oauth2 import BackendApplicationClient
+
+from datetime import datetime
+from datetime import date
+
 load_dotenv()
 
 intents = discord.Intents.default()
@@ -91,7 +95,11 @@ async def get_intra_id(ctx):
         await ctx.response.send_message(f"Could not find user {id} in {campus_name}.")
         return
 
-    await ctx.response.send_message(f"Found user {id} in {campus_name}.", ephemeral=True)
+    if len(info["cursus_users"]) > 1:
+        dt = datetime.strptime(info["cursus_users"][1]["blackholed_at"], "%Y-%m-%dT00:00:00.000Z")
+        await ctx.response.send_message(f"Found user {id} in {campus_name}, they have {(dt.date() - date.today()).days} blackhole days left.", ephemeral=False)
+    else:
+        await ctx.response.send_message(f"Found user {id} in {campus_name}", ephemeral=False)
 
 @tree.command(name='hello', description="Say hello", guild=discord.Object(id=1159774219291344946))
 async def hello(message):
