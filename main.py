@@ -13,6 +13,8 @@ from oauthlib.oauth2 import BackendApplicationClient
 from datetime import datetime, timedelta
 from datetime import date
 
+from blackhole_request_modal import BlackholeRequestModal
+
 load_dotenv()
 
 intents = discord.Intents.default()
@@ -181,9 +183,15 @@ async def blackhole(message, days: int):
         await admin.send(embed=mes_admin)
         await admin.send(view=button1)
 
+@tree.command(name='blackhole_request', description="Sends a request to extend blackhole days", guild=discord.Object(id=1159774219291344946))
+async def blackhole_request(interaction: discord.Interaction):
+	modal = BlackholeRequestModal(bot, title="Blackhole request form")
+	await interaction.response.send_modal(modal)
+
 @bot.event
 async def on_ready():
-	await tree.sync(guild=discord.Object(id=1159774219291344946))
-	# import_user.start()
+	print('We have logged in as {0.user}'.format(bot))
+	guild = discord.utils.get(bot.guilds, name='42bot')
+	await tree.sync(guild=guild)
 
 bot.run(os.getenv("DISCORD_TOKEN"))
