@@ -134,6 +134,8 @@ async def blackhole_request(interaction: discord.Interaction):
 
 @bot.event
 async def on_ready():
-    await tree.sync(guild=discord.Object(id=1159774219291344946))
+	print('We have logged in as {0.user}'.format(client))
+	guild = discord.utils.get(client.guilds, name='42bot')
+	await tree.sync(guild=guild)
 
 bot.run(os.getenv("DISCORD_TOKEN"))
