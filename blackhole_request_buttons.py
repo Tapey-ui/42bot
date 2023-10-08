@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timedelta, date
 
 class BlackholeRequestButtons(discord.ui.View):
-	def __init__(self, bot: discord.Client, mes_admin: discord.Embed, user: discord.User | discord.Member, day: int):
+	def __init__(self, bot: discord.Client, mes_admin: discord.Embed, user, day: int):
 		super().__init__()
 		self.value = None
 		self.bot = bot

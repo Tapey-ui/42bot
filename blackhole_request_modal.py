@@ -28,8 +28,6 @@ class BlackholeRequestModal(discord.ui.Modal):
 			return
 		user = self.session.get(os.getenv('API_URL') + f'/v2/users/{id.lower()}')
 		info = {}
-		if os.path.exists("test.json"):
-			os.remove("test.json")
 		try:
 			info = user.json()
 			with open('user.json', "w") as w:
@@ -41,7 +39,7 @@ class BlackholeRequestModal(discord.ui.Modal):
 			dt = datetime.strptime(info["cursus_users"][1]["blackholed_at"], "%Y-%m-%dT%H:%M:%S.%fZ")
 		bd = (dt.date() - date.today()).days
 		if (bd > 50):
-			await interaction.message.response.send_message(f"Hi {interaction.user.mention}, you still have {bd} days left, which is more than enough for a project. Should you want to extend you blackhole days, please contact the BOCALs or consider taking AGU. :D")
+			await interaction.response.send_message(f"Hi {interaction.user.mention}, you still have {bd} days left, which is more than enough for a project. Should you want to extend you blackhole days, please contact the BOCALs or consider taking AGU. :D")
 		if (int(self.children[0].value) < 0):
 			await interaction.response.send_message("Hi " + interaction.user.mention + ", please enter a valid blackhole day amount to request extension! (Must be 14 days or lower)")
 		elif (int(self.children[0].value) > 14):
