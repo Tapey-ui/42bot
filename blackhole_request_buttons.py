@@ -17,7 +17,7 @@ class BlackholeRequestButtons(discord.ui.View):
 
 		mes_admin = discord.Embed(title = "Request Approved!", color = 0x77DD77)
 		mes_admin.add_field(name="", value="Request Approved, thanks!", inline=True)
-		await interaction.response.edit_message(embed=mes_admin)
+		await interaction.response.edit_message(embed=mes_admin, view=None)
 		self.value = False
 		self.stop()
 
@@ -29,6 +29,6 @@ class BlackholeRequestButtons(discord.ui.View):
 
 		mes_admin = discord.Embed(title = "Request Declined!", color = 0xFF6961)
 		mes_admin.add_field(name="", value="Request Declined, thanks!", inline=True)
-		await interaction.response.edit_message(embed=mes_admin)
+		await interaction.response.edit_message(embed=mes_admin, view=None)
 		self.value = False
 		self.stop()
