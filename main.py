@@ -99,6 +99,51 @@ class Button(discord.ui.View):
 # 	with open('test.json', "w") as w:
 # 		w.write(json.dumps(list))
 
+@tasks.loop(seconds=10)
+async def test_task():
+	print("checking users now!")
+	guild = discord.utils.get(bot.guilds, name='42bot')
+
+	async def remove_role_from_user(user, role_name):
+		role = discord.utils.get(guild.roles, name=role_name)
+		if not role or not discord.utils.get(user.roles, name=role_name):
+			return
+		await user.remove_roles(role)
+		print(f'removed {user.display_name} from {role_name}')
+
+	async def add_role_to_user(user, role_name):
+		if discord.utils.get(user.roles, name=role_name):
+			return
+		role = discord.utils.get(guild.roles, name=role_name)
+		await user.add_roles(role)
+		print(f'added {user.display_name} to {role_name}')
+
+	for user in guild.members:
+		try:
+			l = user.display_name.split("|")
+			id = l[1].strip()
+		except:
+			await add_role_to_user(user, "INVALID USER")
+			await remove_role_from_user(user, "Pisciner")
+			await remove_role_from_user(user, "CADET")
+			continue
+
+		req = life.get(API_URL + f'/v2/users/{id}')
+		try:
+			info = req.json()['cursus_users']
+		except:
+			await add_role_to_user(user, "INVALID USER")
+			await remove_role_from_user(user, "Pisciner")
+			await remove_role_from_user(user, "CADET")
+			continue
+
+		if len(info) > 1:
+			await add_role_to_user(user, "CADET")
+			await remove_role_from_user(user, "Pisciner")
+		elif len(info) == 1:
+			await add_role_to_user(user, "Pisciner")
+			await remove_role_from_user(user, "CADET")
+
 @tree.command(name='getid', description="Gets your id", guild=discord.Object(id=1159774219291344946))
 async def get_intra_id(ctx):
     id = ""
@@ -190,6 +235,7 @@ async def blackhole_request(interaction: discord.Interaction):
 
 @bot.event
 async def on_ready():
+	test_task.start()
 	print('We have logged in as {0.user}'.format(bot))
 	guild = discord.utils.get(bot.guilds, name='42bot')
 	await tree.sync(guild=guild)
