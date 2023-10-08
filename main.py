@@ -10,8 +10,7 @@ from discord import app_commands
 from requests_oauthlib import OAuth2Session
 from oauthlib.oauth2 import BackendApplicationClient
 
-from datetime import datetime, timedelta
-from datetime import date
+from datetime import datetime, timedelta, date
 
 from blackhole_request_modal import BlackholeRequestModal
 from blackhole_request_buttons import BlackholeRequestButtons
@@ -186,7 +185,7 @@ async def blackhole(message, days: int):
 
 @tree.command(name='blackhole_request', description="Sends a request to extend blackhole days", guild=discord.Object(id=1159774219291344946))
 async def blackhole_request(interaction: discord.Interaction):
-	modal = BlackholeRequestModal(bot, title="Blackhole request form")
+	modal = BlackholeRequestModal(bot, life, title="Blackhole request form")
 	await interaction.response.send_modal(modal)
 
 @bot.event
