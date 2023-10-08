@@ -3,6 +3,8 @@ import requests
 import os
 import json
 
+import time
+
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext import tasks
@@ -74,19 +76,28 @@ async def test_task():
 		print(f'added {user.display_name} to {role_name}')
 
 	for user in guild.members:
+		id = ""
 		try:
 			l = user.display_name.split("|")
 			id = l[1].strip()
 		except:
+			print(f"{user.display_name}: Could not find intra id")
 			await add_role_to_user(user, "INVALID USER")
 			await remove_role_from_user(user, "Pisciner")
 			await remove_role_from_user(user, "CADET")
 			continue
 
+		if id == "":
+			continue
+
+		time.sleep(2)
+		#print(f"getting user {id}")
 		req = life.get(API_URL + f'/v2/users/{id}')
+		info = {}
 		try:
 			info = req.json()['cursus_users']
 		except:
+			print(f"{user.display_name}: user info error: {id}: {req}")
 			await add_role_to_user(user, "INVALID USER")
 			await remove_role_from_user(user, "Pisciner")
 			await remove_role_from_user(user, "CADET")
@@ -95,9 +106,11 @@ async def test_task():
 		if len(info) > 1:
 			await add_role_to_user(user, "CADET")
 			await remove_role_from_user(user, "Pisciner")
+			await remove_role_from_user(user, "INVALID USER")
 		elif len(info) == 1:
 			await add_role_to_user(user, "Pisciner")
 			await remove_role_from_user(user, "CADET")
+			await remove_role_from_user(user, "INVALID USER")
 
 @tree.command(name='getid', description="Gets your id", guild=discord.Object(id=1159774219291344946))
 async def get_intra_id(ctx):
@@ -135,7 +148,13 @@ async def get_intra_id(ctx):
 
 @tree.command(name='hello', description="Say hello", guild=discord.utils.get(bot.guilds, name=os.getenv('SERVER_NAME')))
 async def hello(message):
-	await message.response.send_message("hey " + message.user.mention)
+	await message.response.send_message('TROUBLESHOOTING\n1. Infinite loading screen for login.\nTurn off the iMac using the power button at the back. Then turn it back on. Do not try another iMac. Instead, recall which iMac did you last use. Go back to that particular iMac and login. It should work. Then click logout if you want to move to a different iMac. If you cannot identify which iMac you last used, you can sometimes check on your intranet profile. If it does not appear there as well, tag me in this channel. While waiting for me to reply, please ask @BOCAL | JeffSandhu or @EX-BOCAL | Tzer Yee  to guest login for you.\n\n2. Apps crashing especially browsers. It will show an infinitely loading rainbow coloured ball cursor. \nGo to Keychain Access app that you can find by clicking on Launchpad or search for it. Delete every file that has the word "Apple" or "com.apple". After that, go to your terminal, head to this directory ~Library/Preferences/com.apple.keychainaccess.plist and remove the highlighted file by using rm -r')
+	#await message.response.send_message("hey " + message.user.mention)
+
+#@tree.command(name='helpme', description="FA-Q", guild=discord.Object(id=1159774219291344946))
+#@tree.command(name='faq', description="gets questions that are frequently asked", guild=discord.Object(id=1159774219291344946))
+#async def thisbetterworkthistime(message):
+	#await message.response.send_message('TROUBLESHOOTING\n1. Infinite loading screen for login.\nTurn off the iMac using the power button at the back. Then turn it back on. Do not try another iMac. Instead, recall which iMac did you last use. Go back to that particular iMac and login. It should work. Then click logout if you want to move to a different iMac. If you cannot identify which iMac you last used, you can sometimes check on your intranet profile. If it does not appear there as well, tag me in this channel. While waiting for me to reply, please ask @BOCAL | JeffSandhu or @EX-BOCAL | Tzer Yee  to guest login for you.\n\n2. Apps crashing especially browsers. It will show an infinitely loading rainbow coloured ball cursor. \nGo to Keychain Access app that you can find by clicking on Launchpad or search for it. Delete every file that has the word "Apple" or "com.apple". After that, go to your terminal, head to this directory ~Library/Preferences/com.apple.keychainaccess.plist and remove the highlighted file by using rm -r')
 
 @tree.command(name='blackhole', description="Requests for blackhole days", guild=discord.Object(id=1159774219291344946))
 async def blackhole(message, days: int):
