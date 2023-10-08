@@ -14,6 +14,7 @@ from datetime import datetime
 from datetime import date
 
 from blackhole_request_modal import BlackholeRequestModal
+from blackhole_request_buttons import BlackholeRequestButtons
 
 load_dotenv()
 
@@ -33,37 +34,7 @@ life.fetch_token(
     client_secret=os.getenv('SECRET')
 )
 
-class Button(discord.ui.View):
-	def __init__(self, bot, mes_admin, name):
-		super().__init__()
-		self.value = None
-		self.bot = bot
-		self.mes_admin = mes_admin
-		self.name = name
 
-	@discord.ui.button(label="Accept", style=discord.ButtonStyle.success)
-	async def accept(self, interaction: discord.interactions, button: discord.ui.Button):
-		stu = await bot.fetch_channel(os.getenv('STUDENT_CH'))
-		suc = discord.Embed(title = "Request Success!", color = 0x77DD77)
-		suc.add_field(name="", value=f"Hi {self.name.split('|')[1]}, your request is successful!", inline=True)
-		mes_admin = discord.Embed(title = "Request Appoved!", color = 0x77DD77)
-		mes_admin.add_field(name="", value="Request Appoved, thanks!", inline=True)
-		await stu.send(embed=suc)
-		await interaction.response.edit_message(embed=mes_admin)
-		self.value = False
-		self.stop()
-
-	@discord.ui.button(label="Decline", style=discord.ButtonStyle.danger)
-	async def decline(self, interaction: discord.interactions, button: discord.ui.Button):
-		stu = await bot.fetch_channel(os.getenv('STUDENT_CH'))
-		suc = discord.Embed(title = "Request Declined!", color = 0xFF6961)
-		suc.add_field(name="", value=f"Hi {self.name.split('|')[1].strip()}, your request has been declined. Should you have any issues regarding blackhole days, please contact the BOCALs.", inline=True)
-		mes_admin = discord.Embed(title = "Request Declined!", color = 0xFF6961)
-		mes_admin.add_field(name="", value="Request Declined, thanks!", inline=True)
-		await stu.send(embed=suc)
-		await interaction.response.edit_message(embed=mes_admin)
-		self.value = False
-		self.stop()
 
 @tree.command(name='getid', description="Gets your id", guild=discord.Object(id=1159774219291344946))
 async def get_intra_id(ctx):
@@ -109,7 +80,9 @@ async def hello(message):
 
 @tree.command(name='blackhole', description="Requests for blackhole days", guild=discord.Object(id=1159774219291344946))
 async def blackhole(message, days: int):
-	admin = await bot.fetch_channel(os.getenv('ADMIN_CH'))
+	guild = discord.utils.get(bot.guilds, name=os.getenv('SERVER_NAME'))
+	admin = discord.utils.get(guild.text_channels, name=os.getenv('ADMIN_CH'))
+	# admin = await bot.fetch_channel(os.getenv('ADMIN_CH'))
 	if (int(days) < 0):
 		await message.response.send_message("Hi " + message.user.mention + ", please enter a valid blackhole day amount to request extension! (Must be 14 days or lower)")
 	elif (int(days) > 14):
@@ -122,8 +95,8 @@ async def blackhole(message, days: int):
 		mes_admin.add_field(name="", value=f"Hi {role.mention}, {message.user.display_name.split('|')[1].strip()} has requested for {days} blackhole days.")
 		if (role == False):
 			await admin.send("test")
-		button1 = Button(bot, mes_admin, message.user.display_name)
-		await message.response.send_message(embed=mes)
+		button1 = BlackholeRequestButtons(bot, mes_admin, message.user)
+		await message.response.send_message(embed=mes, ephemeral=True)
 		await admin.send(embed=mes_admin)
 		await admin.send(view=button1)
 
