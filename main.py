@@ -129,13 +129,13 @@ async def blackhole(message, days: int):
 
 @tree.command(name='blackhole_request', description="Sends a request to extend blackhole days", guild=discord.Object(id=1159774219291344946))
 async def blackhole_request(interaction: discord.Interaction):
-	modal = BlackholeRequestModal(client, title="Blackhole request form")
+	modal = BlackholeRequestModal(bot, title="Blackhole request form")
 	await interaction.response.send_modal(modal)
 
 @bot.event
 async def on_ready():
-	print('We have logged in as {0.user}'.format(client))
-	guild = discord.utils.get(client.guilds, name='42bot')
+	print('We have logged in as {0.user}'.format(bot))
+	guild = discord.utils.get(bot.guilds, name='42bot')
 	await tree.sync(guild=guild)
 
 bot.run(os.getenv("DISCORD_TOKEN"))
