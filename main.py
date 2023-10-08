@@ -99,7 +99,7 @@ class Button(discord.ui.View):
 # 	with open('test.json', "w") as w:
 # 		w.write(json.dumps(list))
 
-@tasks.loop(seconds=10)
+@tasks.loop(seconds=30)
 async def test_task():
 	print("checking users now!")
 	guild = discord.utils.get(bot.guilds, name='42bot')
