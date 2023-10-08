@@ -1,4 +1,7 @@
 import discord
+import os
+
+from blackhole_request_buttons import BlackholeRequestButtons
 
 class BlackholeRequestModal(discord.ui.Modal):
 	def __init__(self, client: discord.Client, *args, **kwargs) -> None:
@@ -19,16 +22,17 @@ class BlackholeRequestModal(discord.ui.Modal):
 
 		role = discord.utils.get(interaction.guild.roles, name='Admin')
 
-		user_embed = discord.Embed(title="Request Sent", color=0xC1E1C1)
+		user_embed: discord.Embed = discord.Embed(title="Request Sent", color=0xC1E1C1)
 		user_embed.add_field(name="", value=f"Hi {interaction.user.mention}, thanks for the feedback! We will answer your request shortly! :D", inline=True)
 
-		admin_embed = discord.Embed(title="Blackhole days request")
-		admin_embed.add_field(name="User", value=interaction.user.name)
-		admin_embed.add_field(name="How many blackhole days", value=self.children[0].value)
-		admin_embed.add_field(name="Reason for the request", value=self.children[1].value)
+		admin_embed: discord.Embed = discord.Embed(title="Blackhole days request")
+		admin_embed.add_field(name="User", value=interaction.user.display_name.split('|')[1])
+		admin_embed.add_field(name="How many blackhole days", value=self.children[0].value, inline=False)
+		admin_embed.add_field(name="Reason for the request", value=self.children[1].value, inline=False)
 
-		guild = discord.utils.get(self.client.guilds, name='42bot')
-		admin_channel =	discord.utils.get(guild.text_channels, name='admin_test')
+		guild = discord.utils.get(self.client.guilds, name=os.getenv('SERVER_NAME'))
+		admin_channel =	discord.utils.get(guild.text_channels, name=os.getenv('ADMIN_CH'))
 		await interaction.response.send_message(embed=user_embed, ephemeral=True)
+		await admin_channel.send(role.mention)
 		await admin_channel.send(embed=admin_embed)
-		# await admin_channel.send(view=)
+		await admin_channel.send(view=BlackholeRequestButtons(self.client, admin_embed, interaction.user, int(self.children[0].value)))
