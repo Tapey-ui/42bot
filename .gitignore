@@ -1,3 +1,5 @@
 .env
 main3.py
 env
+user.json
+.gitignore
