@@ -35,4 +35,4 @@ class BlackholeRequestModal(discord.ui.Modal):
 		await interaction.response.send_message(embed=user_embed, ephemeral=True)
 		await admin_channel.send(role.mention)
 		await admin_channel.send(embed=admin_embed)
-		await admin_channel.send(view=BlackholeRequestButtons(self.client, admin_embed, interaction.user))
+		await admin_channel.send(view=BlackholeRequestButtons(self.client, admin_embed, interaction.user, int(self.children[0].value)))
